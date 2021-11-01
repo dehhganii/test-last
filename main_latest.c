@@ -8,7 +8,7 @@ clock_t start_BM, finish_BM,start_KMP, finish_KMP, start_BF, finish_BF;
 
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
-#define MAXCHAR 510511
+#define MAXCHAR 211
 int * text;
 int * pattern;
 int * BA; //Border Array
@@ -16,7 +16,7 @@ int * PA; //Prefix Array
 int * indetlist; //list conisting of positions at which the pattern occurs in text
 int * prime;
 int *arr;
-int alphabet_size [] = {2, 3, 5, 7,6, 10, 14, 22, 26, 34, 15, 21, 33, 39, 51, 35, 55, 65, 85, 77, 91, 119, 143, 187, 221, 30, 42, 66, 78, 102, 70, 110, 130, 170, 154, 182, 238, 286, 374, 442, 105, 165, 195, 255, 231, 273, 357, 429, 561, 663, 385, 455, 595, 715, 935, 1105, 1001, 1309, 1547, 2431, 210, 330, 390, 510, 462, 546, 714, 858, 1122, 1326, 770, 910, 1190, 1430, 1870, 2210, 2002, 2618, 3094, 4862, 1155, 1365, 1785, 2145, 2805, 3315, 3003, 3927, 4641, 7293, 5005, 6545, 7735, 12155, 17017, 2310, 2730, 3570, 4290, 5610, 6630, 6006, 7854, 9282, 14586, 10010, 13090, 15470, 24310, 34034, 15015, 19635, 23205, 36465, 51051, 85085, 30030, 39270, 46410, 72930, 102102, 170170, 255255, 510510};
+int alphabet_size [] = {2, 3, 5, 7, 6, 10, 14, 15, 21, 35, 30, 42, 70, 105, 210};
 //int ** bad_char_table;
 typedef  int (*bad_character_rule_ptr)(int i, int c, int* amap, int len_amap, int**  bad_char, int len_bad_char);
 typedef  int (*good_suffix_rule_ptr)(int i, int* big_l_array, int len_big_l_array, int* small_l_prime_array, int len_small_l_prime_array);
@@ -49,7 +49,7 @@ int min(int i, int j);
 int match(int * text, int pos1, int pos2, int j, int n);
 void prefixarray(int * text, int n);
 int compute_shift(bool indettext, int i, int j, int m_ell);
-void KMP_Indet(int n, int m, int sigma);
+void KMP_Indet(int n, int m, int sigma, int m_ell);
 void bruteforce(int n, int m);
 int* z_array(int* s, int len);
 int* n_array(int* s, int len);
@@ -239,14 +239,14 @@ int compute_shift(bool indettext, int i, int j, int m_ell){
     return j;
 }
 
-void KMP_Indet(int n, int m, int sigma){
+void KMP_Indet(int n, int m, int sigma, int m_ell){
 
     int x, y; //variables for gcdExtended function.
     int i, j;
-    int m_ell; //length of the longest regular prefix of the pattern.
+    //int m_ell; //length of the longest regular prefix of the pattern.
     bool indettext = false;
     //compute m_ell
-
+    /*
     m_ell=m; //assumes that pattern is regular
     i = 0;
     while(i<m){
@@ -257,7 +257,8 @@ void KMP_Indet(int n, int m, int sigma){
         }
         i=i+1;
     }
-    borderarray(pattern, m_ell); //Border array of the longest regular prefix of pattern.
+    */
+    //borderarray(pattern, m_ell); //Border array of the longest regular prefix of pattern.
     i=-1;//reset
     j=-1;
     int count = -1;
@@ -273,7 +274,7 @@ void KMP_Indet(int n, int m, int sigma){
             i = i+1;
 
             if(j==m-1){
-                printf("the pattern found in this position of text: %d\n", i-j);
+                //printf("the pattern found in this position of text: %d\n", i-j);
                 count = count + 1;
 
                 indetlist[count] = i-j;
@@ -315,8 +316,8 @@ void bruteforce(int n, int m){
             if(j==m-1){
                 count = count + 1;
                 indetlist[count] = index;
-                printf("count: %d\t", count);
-                printf("%d \n", indetlist[count]);
+                //printf("count: %d\t", count);
+                //printf("%d \n", indetlist[count]);
                 index = index+1;
                 i = index-1;
                 j = -1;
@@ -744,7 +745,7 @@ int boyer_moore_fun(int* p, int len_p, boyer_moore p_bm, int* t, int len_t, int*
             if(gcd(p[j], t[i + j]) == 1){
                 //skip_bc = bad_character_rule_fun(j, t[i + j], p_bm.amap_s, p_bm.len_amap_s, p_bm.bad_char_s, p_bm.len_bad_char_s);
                 skip_bc =  *(arr + t[i + j]*MAXCHAR + j);
-                printf("i=%d, j=%d, skip_bc = %d\n", i, j, skip_bc);
+                //printf("i=%d, j=%d, skip_bc = %d\n", i, j, skip_bc);
                 skip_gs = 0;
                 if(indet(t[i + j], sigma) || len_p - j - 1 >= m_ell_suf){
                     skip_gs = indet_good_suffix(p, len_p, t, i, len_p - j - 1);
@@ -752,7 +753,7 @@ int boyer_moore_fun(int* p, int len_p, boyer_moore p_bm, int* t, int len_t, int*
                 else{
                     skip_gs = good_suffix_rule_fun(j, p_bm.big_l_array_s, len_p, p_bm.small_l_prime_array_s, len_p);
                 }
-                printf("skip_gs=%d\n", skip_gs);
+                //printf("skip_gs=%d\n", skip_gs);
                 shift = MAX(shift, skip_bc);
                 shift = MAX(shift, skip_gs);
                 mismatched = true;
@@ -761,7 +762,7 @@ int boyer_moore_fun(int* p, int len_p, boyer_moore p_bm, int* t, int len_t, int*
 
         }
         if(!mismatched){
-            printf("the index of match = %d\n", i);
+            //printf("the index of match = %d\n", i);
             occurrences_len++;
             occurrences[occurrences_len - 1] = i;
             //printf("the index of match = %d\n", occurrences[occurrences_len - 1]);
@@ -775,16 +776,15 @@ int boyer_moore_fun(int* p, int len_p, boyer_moore p_bm, int* t, int len_t, int*
 
             shift = MAX(shift, skip_gs);
         }
-        printf("i=%d, shift = %d\n", i, shift);
+       //printf("i=%d, shift = %d\n", i, shift);
         i += shift;
     }
-    
+    /*
     for(int i = 0; i < occurrences_len; i++){
         printf("[%d] : %d ", i, occurrences[i]);
     }
-    
+    */
     return occurrences_len;
-
 }
 
 void init_boyer_moore_struct(int* p, int len_p, boyer_moore* p_bm)
@@ -810,7 +810,7 @@ void init_boyer_moore_struct(int* p, int len_p, boyer_moore* p_bm)
     p_bm->next_boyer_moore = NULL;
 
 }
-int main(int argc, char *argv[])
+int main()
 {
     int temp=0,n=0,m=0;
     char filename[100];
@@ -818,19 +818,16 @@ int main(int argc, char *argv[])
     int *value;
     char* token;
     long int len;
-    if (argc != 4) {
-        fprintf(stderr,"Usage: ./main <alphabet_size>  <input text PY binary file> <input pattern PY binary file>\n");
-        return -1;
-    }
+
     // read text file and generate .bin file of text
-    int sigma = atoi(argv[1]);
-    strcpy(filename, argv[2]);
+    int sigma = 4;//atoi(argv[1]);
+    strcpy(filename, "demofile_text");
     FILE *text_file = fopen(filename, "r");
     fseek(text_file, 0, SEEK_END);
     len = ftell(text_file);
     rewind(text_file);
     char line1[len];
-    strcpy(filename2, argv[2]);
+    strcpy(filename2, "demofile_text");
     strcat(filename2,"c.bin");
     FILE *text_fp = fopen(filename2, "wb");
     fread(line1, sizeof(char), len, text_fp);
@@ -850,13 +847,13 @@ int main(int argc, char *argv[])
     fclose(text_fp);
     text = readbin1(filename2);
 
-    strcpy(filename, argv[3]);
+    strcpy(filename, "demofile_pattern");
     FILE *pattern_file = fopen(filename, "r");
     fseek(pattern_file, 0, SEEK_END);
     len = ftell(pattern_file);
     rewind(pattern_file);
     char line[len];
-    strcpy(filename2, argv[3]);
+    strcpy(filename2, "demofile_pattern");
     strcat(filename2,"c.bin");
     FILE *pattern_fp = fopen(filename2, "wb");
     fread(line, sizeof(char), len, pattern_fp);
@@ -890,8 +887,20 @@ int main(int argc, char *argv[])
     double BF_time = (double)((finish_BF - start_BF) / (double)CLOCKS_PER_SEC);
     printf("%.7f \n", BF_time);
     //printf("-------KMP Indet-------\n");
+    int m_ell=m; //assumes that pattern is regular
+    int i = 0;
+    while(i<m){
+        if(indet(pattern[i], sigma)){
+
+            m_ell=i;
+            break;
+        }
+        i=i+1;
+    }
+
+    borderarray(pattern, m_ell);
     start_KMP = clock();
-    KMP_Indet(n,m, atoi(argv[1]));
+    KMP_Indet(n,m, 4, m_ell);
     finish_KMP = clock();
     double KMP_time = (double)((finish_KMP - start_KMP) / (double)CLOCKS_PER_SEC);
     printf("%.7f \n", KMP_time);
@@ -899,7 +908,7 @@ int main(int argc, char *argv[])
     //int p[6] = {15, 6, 6, 3, 30, 6};
     //int t[24] = {7, 2, 15, 7, 5, 3, 7, 10, 30, 105, 6, 6, 3, 15, 6, 30, 7, 105, 15, 6, 3, 3, 2, 6};
     //printf("-------Boyer Moore-------\n");
-    calculate_table(pattern, m,MAXCHAR);
+    calculate_table(pattern, m, MAXCHAR);
     boyer_moore my_boyer_moore;
     init_boyer_moore_struct(pattern, m, &my_boyer_moore);
     int* occurrences = (int*)calloc(n, sizeof(int));
@@ -920,6 +929,7 @@ int main(int argc, char *argv[])
     }
     */
     free(arr);
+    //printf("----------------------------------------");
     return 0;
 }
 

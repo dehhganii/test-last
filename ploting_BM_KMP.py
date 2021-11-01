@@ -48,36 +48,107 @@ def gen_indet_string(text, alphabet_size, num):
         else:
             pos = random.randint(0, len(text) - 1)
             text[pos] = indet_list[random.randint(0, len(indet_list) - 1)]
+        #text[len(text) - num + i] = indet_list[random.randint(0, len(indet_list) - 1)]
     return text
 
-"""
-text = gen_solid_string(150, 4)
-text = gen_indet_string(text, 4, 20)
-#print(text)
-pattern = gen_solid_string(4, 4)
-pattern = gen_indet_string(pattern, 4, 2)
-#print(pattern)
-"""
+
+
+
 def generate_text_pattern(text_length, text_indet_letters, pattern_length, pattern_indet_letters, alphabet):
+
     text = gen_solid_string(text_length, alphabet)
     text = gen_indet_string(text, alphabet, text_indet_letters)
     pattern = gen_solid_string(pattern_length, alphabet)
     pattern = gen_indet_string(pattern, alphabet, pattern_indet_letters)
-    f = open("/Users/hossein/Documents/Final_result/demofile_pattern", "w")
+
+    """
+    text = []
+    pattern = []
+    for j in range(1, 500 * i):
+        if j % 200 == 0:
+            text.append(35)
+        else:
+            text.append(2)
+
+    for j in range(20* i):
+        pattern.append(2)
+    
+    """
+    #print(text)
+    #print(pattern)
+
+    f = open("/demofile_pattern", "w")
     for i in pattern:
         f.write(str(i) + ",")
     f.close()
 
-    f2 = open("/Users/hossein/Documents/Final_result/demofile_text", "w")
-    for i in text:
-        f2.write(str(i) + ",")
+    f2 = open("/demofile_text", "w")
+    for j in text:
+        f2.write(str(j) + ",")
     f2.close()
 
 """
-for i in range(1, 300):
-    generate_text_pattern(500 * i, 50, 20, 5, 4)
+for i in range(1, 100):
+    generate_text_pattern(i, 0, 20, 0, 8)
     subprocess.call("./a.out")
 """
+def new_text_and_pattern(n, m):
+    patt = [2] * m
+    tex = patt[1:] + [15]
+    text = tex * n
+    #print(patt)
+    #print(text)
+    f = open("/demofile_pattern", "w")
+    for i in patt:
+        f.write(str(i) + ",")
+    f.close()
+
+    f2 = open("/demofile_text", "w")
+    for j in text:
+        f2.write(str(j) + ",")
+    f2.close()
+
+"""
+for i in range(10, 1900, 10):
+    new_text_and_pattern(i, 5 + int(i/10))
+    subprocess.call(("./a.out"))
+"""
+#for i in range(1, 300):
+ #   generate_text_pattern(500*i,int(i/50), 5+int(i/2), 0, 4)
+  #  subprocess.call("./a.out")
+
+"""
+text = []
+pattern = []
+for i in range(1, 100000):
+    if i % 200 == 0:
+        text.append(35)
+    else:
+        text.append(2)
+
+for i in range(200):
+    pattern.append(2)
+
+f = open("/Users/hossein/Documents/generate_test_cases/demofile_pattern", "w")
+for i in pattern:
+    f.write(str(i) + ",")
+f.close()
+
+f2 = open("/Users/hossein/Documents/generate_test_cases/demofile_text", "w")
+for i in text:
+    f2.write(str(i) + ",")
+f2.close()
+
+subprocess.call("./a.out")
+"""
+#print(sorted(gen_power_set(gen_prime(4))))
+
+for i in range(1, 200):
+    n = 500 * i
+    m = 5 + int(0.3 * i)
+    k1 = int(i / 30)
+    k2 = 3
+    generate_text_pattern(n, k1, m, k2, 4)
+    subprocess.call("./a.out")
 
 
-print(gen_power_set(gen_prime(4)))
